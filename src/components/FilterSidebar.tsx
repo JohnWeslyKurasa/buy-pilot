@@ -11,7 +11,7 @@ export interface FilterState {
   minRating: number;
 }
 
-export function FilterSidebar({ results, onFilterChange }: { results: GroupedProduct[], onFilterChange: (filters: FilterState) => void }) {
+export function FilterSidebar({ results, onFilterChange, className = "" }: { results: GroupedProduct[], onFilterChange: (filters: FilterState) => void, className?: string }) {
   
   const uniqueBrands = Array.from(new Set(results.map(r => r.brand).filter(b => b && b !== "Unknown"))).slice(0, 10);
   
@@ -81,7 +81,7 @@ export function FilterSidebar({ results, onFilterChange }: { results: GroupedPro
   });
 
   return (
-    <aside className="w-64 flex-shrink-0 hidden lg:block overflow-y-auto h-[calc(100vh-140px)] pr-6 pb-20 no-scrollbar">
+    <aside className={`w-full lg:w-64 flex-shrink-0 overflow-y-auto h-[calc(100vh-140px)] lg:pr-6 pb-20 no-scrollbar ${className}`}>
       
       {filterCategories.map((category, idx) => (
         <div key={idx} className="mb-6 border-b border-border/50 pb-6">

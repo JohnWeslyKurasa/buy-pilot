@@ -79,7 +79,7 @@ export function CompareModal({
                             Best Value
                           </div>
                         )}
-                        {p.image && p.image.startsWith('http') ? (
+                        {p.image ? (
                           <img 
                             src={p.image} 
                             alt={p.title} 
@@ -87,9 +87,14 @@ export function CompareModal({
                             onError={(e) => { e.currentTarget.style.display = 'none'; }}
                           />
                         ) : (
-                          <div className="w-full h-full absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-600/10 flex flex-col items-center justify-center p-4 text-center">
-                             <div className="font-bold text-indigo-900/40 text-lg mb-1">{p.brand}</div>
-                             <div className="text-xs text-indigo-900/30 font-medium line-clamp-3">{p.title}</div>
+                          <div className="flex items-center justify-center w-full h-full p-4 opacity-40 hover:opacity-80 transition-all">
+                            {p.offers[0]?.marketplace === "Croma" && <img src="https://media.croma.com/image/upload/v1637733954/Croma%20Assets/UI%20Assets/croma_logo_light.svg" className="max-w-[100px]" alt="Croma" />}
+                            {p.offers[0]?.marketplace === "Reliance Digital" && <img src="https://www.reliancedigital.in/build/client/images/loaders/rd_logo.svg" className="max-w-[100px]" alt="Reliance Digital" />}
+                            {p.offers[0]?.marketplace === "Nykaa" && <img src="https://cdn.iconscout.com/icon/free/png-256/free-nykaa-3384013-2822953.png" className="max-w-[60px]" alt="Nykaa" />}
+                            {p.offers[0]?.marketplace === "Meesho" && <img src="https://images.meesho.com/images/pow/play_icon.png" className="max-w-[60px]" alt="Meesho" />}
+                            {!["Croma", "Reliance Digital", "Nykaa", "Meesho"].includes(p.offers[0]?.marketplace) && (
+                              <span className="font-bold text-lg text-muted-foreground">{p.brand}</span>
+                            )}
                           </div>
                         )}
                       </div>

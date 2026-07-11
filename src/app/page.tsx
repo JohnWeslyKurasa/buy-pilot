@@ -2,8 +2,10 @@
 
 
 import { useState, useEffect } from "react";
+import { Filter, X } from "lucide-react";
 import { SearchHero } from "@/components/SearchHero";
 import { SearchHeader } from "@/components/SearchHeader";
+import { HomeHeader } from "@/components/HomeHeader";
 import { FilterSidebar, FilterState } from "@/components/FilterSidebar";
 import { LoadingExperience } from "@/components/LoadingExperience";
 import { ProductResults } from "@/components/ProductResults";
@@ -125,13 +127,7 @@ export default function Home() {
       {(!isSearching && !results) ? (
         <>
           {/* Default Hero State */}
-          <header className="w-full h-16 border-b border-border/40 bg-white/80 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between px-6">
-            <div className="font-bold text-xl tracking-tight text-primary flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md">BP</div>
-              Buy Pilot
-            </div>
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary cursor-pointer hover:bg-primary hover:text-white transition-colors">U</div>
-          </header>
+          <HomeHeader />
           <div className="flex-1 flex items-center justify-center -mt-20">
             <SearchHero onSearch={handleSearch} />
           </div>
@@ -148,18 +144,39 @@ export default function Home() {
             ) : (
               filteredResults !== null && (
                 <>
-                  <div className="w-full flex lg:hidden items-center justify-between p-4 border-b bg-white z-20 sticky top-32">
-                    <span className="font-bold">Filters</span>
-                    <Button variant="outline" size="sm" onClick={() => setShowMobileFilters(!showMobileFilters)}>
-                      {showMobileFilters ? "Hide Filters" : "Show Filters"}
-                    </Button>
-                  </div>
-                  
-                  <div className={`${showMobileFilters ? 'block' : 'hidden'} lg:block w-full lg:w-72 shrink-0 p-6 border-r border-border/40 bg-white shadow-sm z-10 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:pt-6 lg:pb-32`}>
+                  <div className="hidden lg:block w-72 shrink-0 p-6 border-r border-border/40 bg-white shadow-sm z-10 sticky top-0 h-screen overflow-y-auto pt-6 pb-32">
                     <FilterSidebar results={results} onFilterChange={setActiveFilters} />
                   </div>
                   
-                  <div className="flex-1 p-2 sm:p-4 lg:p-8 overflow-y-auto pb-32">
+                  <div className="flex-1 p-4 lg:p-8 overflow-y-auto pb-32">
+                    {/* Mobile Filters Toggle */}
+                    <div className="lg:hidden flex justify-end mb-6">
+                      <Button onClick={() => setShowMobileFilters(true)} variant="outline" className="rounded-full shadow-sm bg-white border-border text-foreground hover:bg-muted transition-all">
+                        <Filter className="w-4 h-4 mr-2" /> 
+                        Filter & Sort
+                      </Button>
+                    </div>
+
+                    {/* Mobile Filters Drawer/Modal */}
+                    {showMobileFilters && (
+                      <div className="fixed inset-0 z-[100] bg-white flex flex-col lg:hidden animate-in slide-in-from-bottom-full">
+                        <div className="flex items-center justify-between p-4 border-b border-border/50 sticky top-0 bg-white z-10 shadow-sm">
+                          <h2 className="text-xl font-bold text-foreground">Filter & Sort</h2>
+                          <Button variant="ghost" size="icon" onClick={() => setShowMobileFilters(false)} className="rounded-full">
+                            <X className="w-5 h-5" />
+                          </Button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4">
+                          <FilterSidebar results={results} onFilterChange={setActiveFilters} className="w-full h-auto !pb-6" />
+                        </div>
+                        <div className="p-4 border-t border-border/50 bg-white sticky bottom-0">
+                          <Button className="w-full rounded-xl py-6 text-base font-bold shadow-md" onClick={() => setShowMobileFilters(false)}>
+                            Show Results
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
                     {aiAnalysis && <AiSummary analysis={aiAnalysis} />}
                     <ProductResults 
                       results={filteredResults} 

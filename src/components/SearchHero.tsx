@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, Camera } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { VisualSearchModal } from "./VisualSearchModal";
 
 const examples = [
   "Running shoes under ₹3000",
@@ -17,6 +18,7 @@ const examples = [
 
 export function SearchHero({ onSearch }: { onSearch: (query: string) => void }) {
   const [query, setQuery] = useState("");
+  const [showScanner, setShowScanner] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,10 +37,6 @@ export function SearchHero({ onSearch }: { onSearch: (query: string) => void }) 
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-          <Sparkles className="w-4 h-4" />
-          AI-Powered Shopping Assistant
-        </span>
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground mb-6">
           Find the Best Product <br className="hidden md:block" />
           <span className="text-primary bg-clip-text">in Seconds.</span>
@@ -60,8 +58,11 @@ export function SearchHero({ onSearch }: { onSearch: (query: string) => void }) 
               placeholder="What are you looking for today?"
               className="flex-1 border-0 focus-visible:ring-0 text-lg md:text-xl h-16 md:h-20 px-4 bg-transparent shadow-none"
             />
-            <div className="pr-3">
-              <Button type="submit" size="lg" className="h-12 md:h-14 rounded-xl px-8 text-base font-semibold shadow-md">
+            <div className="pr-1 flex items-center">
+              <Button type="button" variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary mr-1" onClick={() => setShowScanner(true)} title="Scan Barcode">
+                <Camera className="w-6 h-6" />
+              </Button>
+              <Button type="submit" size="lg" className="h-12 md:h-14 rounded-xl px-6 md:px-8 text-base font-semibold shadow-md">
                 Search
               </Button>
             </div>
@@ -89,6 +90,16 @@ export function SearchHero({ onSearch }: { onSearch: (query: string) => void }) 
           </div>
         </div>
       </motion.div>
+      {showScanner && (
+        <VisualSearchModal 
+          onClose={() => setShowScanner(false)} 
+          onSearch={(text) => {
+            setShowScanner(false);
+            setQuery(text);
+            onSearch(text);
+          }} 
+        />
+      )}
     </div>
   );
 }

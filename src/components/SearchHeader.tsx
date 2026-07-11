@@ -1,43 +1,39 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
-import { Menu, Heart } from "lucide-react";
+import { useState } from "react";
+import { Search, Mic, Camera, MapPin, Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { VisualSearchModal } from "./VisualSearchModal";
+import { useSession, signOut } from "next-auth/react";
+import { AuthModal } from "./AuthModal";
+import { WishlistDrawer } from "./WishlistDrawer";
 
 export function SearchHeader({ initialQuery = "", onSearch }: { initialQuery?: string, onSearch: (q: string) => void }) {
   const [query, setQuery] = useState(initialQuery);
+  const [showScanner, setShowScanner] = useState(false);
   const { data: session } = useSession();
+  const [showAuth, setShowAuth] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) onSearch(query);
   };
 
-  return (
-    <div className="w-full bg-white border-b border-border shadow-sm sticky top-0 z-50 pt-3 pb-3">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-4 md:gap-6">
-        
-        {/* Top Row on Mobile (Logo & Auth/Menu) */}
-        <div className="flex w-full md:w-auto items-center justify-between">
-          <div 
-            className="font-bold text-xl md:text-2xl tracking-tight text-primary flex items-center gap-2 cursor-pointer"
-            onClick={() => window.location.href = "/"}
-          >
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-base md:text-lg shadow-md shadow-primary/20">
-              BP
-            </div>
-            <span>Buy Pilot</span>
-          </div>
+  const chips = ["All", "Shopping", "Images", "Videos", "News", "Short Videos", "Nearby", "Brands", "Price", "Rating", "Offers", "Availability"];
 
-          <div className="flex md:hidden items-center gap-3">
-            {session ? (
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary" onClick={() => signOut()}>
-                {session.user?.name?.[0]?.toUpperCase() || "U"}
-              </div>
-            ) : (
-              <Button size="sm" variant="outline" onClick={() => signIn()}>Login</Button>
-            )}
-            <Menu className="w-6 h-6 text-foreground" />
+  return (
+    <div className="w-full bg-white border-b border-border shadow-sm sticky top-0 z-50 pt-4">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-6">
+        {/* Logo */}
+        <div 
+          className="font-bold text-2xl tracking-tight text-primary flex items-center gap-2 cursor-pointer mb-2 md:mb-0"
+          onClick={() => window.location.href = "/"}
+        >
+          <div className="w-10 h-10 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg shadow-md shadow-primary/20">
+            BP
           </div>
+          <span className="hidden md:inline">Buy Pilot</span>
         </div>
 
         {/* Search Bar */}
@@ -48,40 +44,69 @@ export function SearchHeader({ initialQuery = "", onSearch }: { initialQuery?: s
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for products, brands and more..."
-              className="flex-1 outline-none text-foreground bg-transparent text-sm md:text-base min-w-0"
+              className="flex-1 outline-none text-foreground bg-transparent text-base"
             />
-            <div className="flex items-center gap-2 text-muted-foreground ml-2 shrink-0">
-              <Mic className="w-4 h-4 md:w-5 md:h-5 cursor-pointer hover:text-primary transition-colors hidden sm:block" />
-              <Camera className="w-4 h-4 md:w-5 md:h-5 cursor-pointer hover:text-primary transition-colors hidden sm:block" />
-              <div className="w-px h-5 md:h-6 bg-border mx-1 hidden sm:block"></div>
+            <div className="flex items-center gap-2 text-muted-foreground ml-2">
+              <Mic className="w-5 h-5 cursor-pointer hover:text-primary transition-colors hidden sm:block" />
+              <button type="button" onClick={() => setShowScanner(true)} title="Scan Barcode" className="flex items-center justify-center p-1 rounded-full hover:bg-muted transition-colors">
+                <Camera className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" />
+              </button>
+              <div className="w-px h-6 bg-border mx-1 hidden sm:block"></div>
               <button type="submit" className="text-primary hover:text-primary/80 transition-colors p-1">
-                <Search className="w-5 h-5 md:w-6 md:h-6" />
+                <Search className="w-6 h-6" />
               </button>
             </div>
           </div>
         </form>
 
-        {/* User Profile (Desktop) */}
-        <div className="hidden md:flex items-center gap-3 shrink-0">
+        {/* User Profile */}
+        <div className="hidden md:flex items-center gap-4">
           {session ? (
             <>
-              <Button variant="ghost" size="sm" className="gap-2">
-                <Heart className="w-4 h-4 text-rose-500 fill-rose-50" /> Saved
-              </Button>
-              <div 
-                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary border border-primary/20 cursor-pointer hover:bg-primary hover:text-white transition-colors"
-                onClick={() => signOut()}
-                title="Logout"
+              <button 
+                onClick={() => setShowWishlist(true)}
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                title="My Wishlist"
               >
-                {session.user?.name?.[0]?.toUpperCase() || "U"}
+                <Heart className="w-5 h-5" />
+              </button>
+              <div className="relative group cursor-pointer">
+                <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                  {session.user?.name?.[0]?.toUpperCase() || session.user?.email?.[0]?.toUpperCase() || "U"}
+                </div>
+                <div className="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2">
+                  <div className="px-4 py-2 border-b border-border/50 text-sm">
+                    <p className="font-semibold text-foreground truncate">{session.user?.name}</p>
+                    <p className="text-muted-foreground text-xs truncate">{session.user?.email}</p>
+                  </div>
+                  <button onClick={() => setShowWishlist(true)} className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors flex items-center gap-2">
+                    <Heart className="w-4 h-4" /> Wishlist
+                  </button>
+                  <button onClick={() => signOut()} className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                    Sign Out
+                  </button>
+                </div>
               </div>
             </>
           ) : (
-            <Button onClick={() => signIn()}>Login / Signup</Button>
+            <Button onClick={() => setShowAuth(true)} className="rounded-full px-6 font-semibold shadow-sm">
+              Sign In
+            </Button>
           )}
         </div>
-
       </div>
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+      {showWishlist && <WishlistDrawer onClose={() => setShowWishlist(false)} />}
+      {showScanner && (
+        <VisualSearchModal 
+          onClose={() => setShowScanner(false)} 
+          onSearch={(text) => {
+            setShowScanner(false);
+            setQuery(text);
+            onSearch(text);
+          }} 
+        />
+      )}
     </div>
   );
 }

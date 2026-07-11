@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Star, ShoppingBag, ArrowRight, TrendingDown, Scale, CheckCircle2, Heart } from "lucide-react";
+import { Star, ShoppingBag, ArrowRight, TrendingDown, Scale, CheckCircle2, Heart, Loader2 } from "lucide-react";
 import { GroupedProduct } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { AuthModal } from "./AuthModal";
 
 export function ProductResults({ 
   results, 
@@ -15,6 +18,37 @@ export function ProductResults({
   onToggleCompare: (id: string) => void;
   compareIds: string[];
 }) {
+  const { data: session } = useSession();
+  const [showAuth, setShowAuth] = useState(false);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+
+  const handleWishlist = async (product: GroupedProduct) => {
+    if (!session) {
+      setShowAuth(true);
+      return;
+    }
+    setSavingId(product.id);
+    const offer = product.offers.find(o => o.price === product.lowestPrice) || product.offers[0];
+    try {
+      await fetch('/api/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: product.title,
+          brand: product.brand,
+          image: product.image || "",
+          price: offer.price || 0,
+          originalUrl: offer.productUrl || "",
+          marketplace: offer.marketplace || "Unknown"
+        })
+      });
+      setSavedIds([...savedIds, product.id]);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
   if (!results || results.length === 0) {
     return (
       <div className="w-full flex flex-col items-center justify-center py-32 px-4 text-center">
@@ -52,7 +86,7 @@ export function ProductResults({
             <Card className="overflow-hidden border-border/40 hover:border-primary/30 transition-all duration-300 hover:shadow-xl bg-white group">
               <CardContent className="p-0 flex flex-col md:flex-row">
                 {/* Image Section */}
-                <div className="w-full md:w-64 h-56 md:h-64 bg-white shrink-0 flex items-center justify-center p-4 md:p-6 border-b md:border-b-0 md:border-r border-border/30 relative">
+                <div className="w-full md:w-64 h-64 bg-white shrink-0 flex items-center justify-center p-6 border-r border-border/30 relative">
                   {product.badges.length > 0 && (
                     <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
                       {product.badges.map(b => (
@@ -64,18 +98,19 @@ export function ProductResults({
                   )}
                   <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
                     <button 
+                      onClick={() => handleWishlist(product)}
+                      disabled={savingId === product.id}
+                      className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors shadow-sm ${savedIds.includes(product.id) ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-border text-muted-foreground hover:border-red-500 hover:text-red-500'}`}
+                      title="Add to Wishlist"
+                    >
+                      {savingId === product.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className={`w-4 h-4 ${savedIds.includes(product.id) ? 'fill-white' : ''}`} />}
+                    </button>
+                    <button 
                       onClick={() => onToggleCompare(product.id)}
                       className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors shadow-sm ${compareIds.includes(product.id) ? 'bg-primary border-primary text-white' : 'bg-white border-border text-muted-foreground hover:border-primary hover:text-primary'}`}
                       title="Compare"
                     >
                       {compareIds.includes(product.id) ? <CheckCircle2 className="w-4 h-4" /> : <Scale className="w-4 h-4" />}
-                    </button>
-                    <button 
-                      className="w-8 h-8 rounded-full border flex items-center justify-center transition-colors shadow-sm bg-white border-border text-muted-foreground hover:border-rose-500 hover:text-rose-500"
-                      title="Keep / Save"
-                      onClick={() => alert("Added to Saved Items!")}
-                    >
-                      <Heart className="w-4 h-4" />
                     </button>
                   </div>
                   {product.image ? (
@@ -167,6 +202,7 @@ export function ProductResults({
           </motion.div>
         ))}
       </div>
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </div>
   );
 }
