@@ -122,7 +122,7 @@ export function CompareModal({
                     </div>
                     {products.map(p => {
                       const val = (p as any)[spec.key];
-                      const displayVal = spec.format && val !== undefined ? spec.format(val) : (val || "N/A");
+                      const displayVal = spec.format && val !== undefined ? (spec.format as any)(val) : (val || "N/A");
                       
                       const isRatingWinner = spec.key === "rating" && parseFloat(val || "0") === highestRatingVal && highestRatingVal > 0;
                       const isPriceWinner = spec.key === "lowestPrice" && val === lowestPriceVal;

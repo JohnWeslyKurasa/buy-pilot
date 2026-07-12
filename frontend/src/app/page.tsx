@@ -12,7 +12,7 @@ import { ProductResults } from "@/components/ProductResults";
 import { AiSummary } from "@/components/AiSummary";
 import { CompareModal } from "@/components/CompareModal";
 import { GroupedProduct } from "@/lib/types";
-import { AiAnalysis } from "@/app/api/analyze/route";
+import { AiAnalysis } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -145,7 +145,7 @@ export default function Home() {
               filteredResults !== null && (
                 <>
                   <div className="hidden lg:block w-72 shrink-0 p-6 border-r border-border/40 bg-white shadow-sm z-10 sticky top-0 h-screen overflow-y-auto pt-6 pb-32">
-                    <FilterSidebar results={results} onFilterChange={setActiveFilters} />
+                    <FilterSidebar results={results || []} onFilterChange={setActiveFilters} />
                   </div>
                   
                   <div className="flex-1 p-4 lg:p-8 overflow-y-auto pb-32">
@@ -167,7 +167,7 @@ export default function Home() {
                           </Button>
                         </div>
                         <div className="flex-1 overflow-y-auto p-4">
-                          <FilterSidebar results={results} onFilterChange={setActiveFilters} className="w-full h-auto !pb-6" />
+                          <FilterSidebar results={results || []} onFilterChange={setActiveFilters} className="w-full h-auto !pb-6" />
                         </div>
                         <div className="p-4 border-t border-border/50 bg-white sticky bottom-0">
                           <Button className="w-full rounded-xl py-6 text-base font-bold shadow-md" onClick={() => setShowMobileFilters(false)}>

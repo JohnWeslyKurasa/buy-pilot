@@ -67,3 +67,17 @@ export interface BaseProvider {
   name: string;
   search: (query: string, browser?: any) => Promise<ProviderResponse>;
 }
+
+export interface CategoryRecommendation {
+  title: string;
+  iconType: string;
+  product: GroupedProduct;
+  colorClass: string;
+}
+
+export interface AiAnalysis {
+  summary: string;
+  recommendations: CategoryRecommendation[];
+  pros: string[];
+  cons: string[];
+}
