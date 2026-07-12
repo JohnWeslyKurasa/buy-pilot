@@ -5,7 +5,17 @@ puppeteer.use(StealthPlugin());
 async function scrape(query) {
   let browser;
   try {
-    browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-blink-features=AutomationControlled"] });
+    browser = await puppeteer.launch({ 
+      headless: true, 
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      args: [
+        "--no-sandbox", 
+        "--disable-setuid-sandbox", 
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--disable-blink-features=AutomationControlled"
+      ] 
+    });
     const page = await browser.newPage();
     const url = `https://www.ajio.com/search/?text=${encodeURIComponent(query)}`;
     

@@ -20,6 +20,7 @@ import analyzeRoutes from "./routes/analyze";
 app.use("/api/auth", authRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/vision", visionRoutes);
+const url = "https://in.search.yahoo.com/search?p=site:amazon.in+HP+Laptop&fr=yfp-t";
 app.use("/api/search", searchRoutes);
 app.use("/api/analyze", analyzeRoutes);
 const PORT = process.env.PORT || 5000;
