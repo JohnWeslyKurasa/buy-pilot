@@ -27,7 +27,7 @@ app.use("/api/analyze", analyzeRoutes);
 
 app.get("/api/diagnose", async (req, res) => {
   try {
-     const url = "https://search.yahoo.com/search?p=site:amazon.in+laptop&fr=yfp-t";
+     const url = "https://search.yahoo.com/search?p=amazon.in+laptop&fr=yfp-t";
      const response = await axios.get(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
