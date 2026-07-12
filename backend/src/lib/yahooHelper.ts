@@ -4,7 +4,7 @@ import { Product } from "./types";
 
 export async function fetchYahooProducts(domain: string, marketplace: string, query: string): Promise<Product[]> {
   try {
-    const searchUrl = "https://search.yahoo.com/search?p=site:" + domain + "+" + encodeURIComponent(query) + "&fr=yfp-t";
+    const searchUrl = "https://in.search.yahoo.com/search?p=site:" + domain + "+" + encodeURIComponent(query) + "&fr=yfp-t";
     
     const { data } = await axios.get(searchUrl, {
       headers: {
