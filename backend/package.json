@@ -5,7 +5,8 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "start": "ts-node src/server.ts"
+    "build": "prisma generate && tsc",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
