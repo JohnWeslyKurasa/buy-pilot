@@ -65,7 +65,11 @@ router.post("/", async (req, res) => {
         "--disable-blink-features=AutomationControlled",
       ],
     });
+  } catch (err: any) {
+    console.warn("Failed to launch shared Puppeteer browser:", err.message);
+  }
 
+  try {
     // Run all providers in parallel
     const responses = await Promise.allSettled(providers.map((provider) =>
       provider.search(q, sharedBrowser)
