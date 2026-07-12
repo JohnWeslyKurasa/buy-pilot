@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-export const API_URL = "http://localhost:5000/api";
+export const API_URL = "/api";
 
 interface User {
   id: string;
