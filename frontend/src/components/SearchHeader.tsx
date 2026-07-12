@@ -72,12 +72,12 @@ export function SearchHeader({ initialQuery = "", onSearch }: { initialQuery?: s
               </button>
               <div className="relative group cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                  {session.user?.name?.[0]?.toUpperCase() || session.user?.email?.[0]?.toUpperCase() || "U"}
+                  {session.name?.[0]?.toUpperCase() || session.email?.[0]?.toUpperCase() || "U"}
                 </div>
                 <div className="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2">
                   <div className="px-4 py-2 border-b border-border/50 text-sm">
-                    <p className="font-semibold text-foreground truncate">{session.user?.name}</p>
-                    <p className="text-muted-foreground text-xs truncate">{session.user?.email}</p>
+                    <p className="font-semibold text-foreground truncate">{session.name}</p>
+                    <p className="text-muted-foreground text-xs truncate">{session.email}</p>
                   </div>
                   <button onClick={() => setShowWishlist(true)} className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors flex items-center gap-2">
                     <Heart className="w-4 h-4" /> Wishlist

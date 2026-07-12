@@ -33,7 +33,13 @@ router.post('/register', async (req, res) => {
       }
     });
 
-    res.json({ id: user.id, name: user.name, email: user.email });
+    const token = jwt.sign(
+      { id: user.id, name: user.name, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Error' });
@@ -63,7 +69,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, name: user.name, email: user.email },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
