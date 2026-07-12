@@ -31,14 +31,26 @@ app.get("/api/diagnose", async (req, res) => {
      const response = await axios.get(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept-Language': 'en-US,en;q=0.9'
         },
         timeout: 10000
      });
+     
+     const cheerio = require('cheerio');
+     const $ = cheerio.load(response.data);
+     const samples: any[] = [];
+     
+     $('.algo-sr').slice(0, 4).each((i: number, el: any) => {
+       const titleEl = $(el).find('.compTitle a');
+       const title = titleEl.text();
+       const snippet = $(el).find('.compTitle').next().text() || $(el).find('.fc-falcon').text() || "";
+       samples.push({ title, snippet });
+     });
+
      return res.json({ 
         success: true, 
         status: response.status, 
-        htmlLength: response.data.length,
-        snippetIncludeLaptop: response.data.includes("laptop")
+        samples
      });
   } catch(e: any) {
      return res.json({ success: false, error: e.message });
