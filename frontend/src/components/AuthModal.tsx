@@ -81,13 +81,8 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
 
         <div className="flex items-center justify-between px-8 pt-8 pb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-md">
-              <Sparkles className="w-4 h-4 text-white animate-pulse" />
-            </div>
-            <div className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neutral-800 via-neutral-900 to-neutral-700">
-              {isLogin ? "Welcome Back" : "Get Started"}
-            </div>
+          <div className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neutral-800 via-neutral-900 to-neutral-700">
+            {isLogin ? "Welcome Back" : "Get Started"}
           </div>
           <button 
             onClick={onClose} 
@@ -98,12 +93,6 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="px-8 pb-8 pt-4">
-          <p className="text-neutral-500 text-sm mb-6 leading-relaxed">
-            {isLogin 
-              ? "Access your dashboard, save items to your wishlist, and track price changes." 
-              : "Create an account to start scanning products, comparing prices, and getting AI insights."
-            }
-          </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
