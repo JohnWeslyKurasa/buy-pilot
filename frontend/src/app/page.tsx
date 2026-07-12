@@ -36,8 +36,10 @@ export default function Home() {
     setShowCompare(false);
     
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+
       // 1. Fetch Grouped Real Products
-      const searchRes = await fetch(`/api/search`, {
+      const searchRes = await fetch(`${baseUrl}/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
@@ -50,7 +52,7 @@ export default function Home() {
 
       // 2. Pass to AI for deep analysis
       if (products.length > 0) {
-        const analyzeRes = await fetch('/api/analyze', {
+        const analyzeRes = await fetch(`${baseUrl}/analyze`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query, products })
