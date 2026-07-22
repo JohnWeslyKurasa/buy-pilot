@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Missing Info' });
+      return res.status(400).json({ error: 'Please provide email and password.' });
     }
 
     const userExists = await prisma.user.findUnique({
@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
     });
 
     if (userExists) {
-      return res.status(400).json({ error: 'Email already registered' });
+      return res.status(400).json({ error: 'Email is already registered.' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -40,9 +40,9 @@ router.post('/register', async (req, res) => {
     );
 
     res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Error' });
+  } catch (error: any) {
+    console.error("Auth Register Error:", error);
+    res.status(500).json({ error: error.message || 'Database error during registration.' });
   }
 });
 
@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      return res.status(400).json({ error: 'Please enter both email and password.' });
     }
 
     const user = await prisma.user.findUnique({
@@ -59,13 +59,13 @@ router.post('/login', async (req, res) => {
     });
 
     if (!user || !user.password) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
     const isCorrectPassword = await bcrypt.compare(password, user.password);
 
     if (!isCorrectPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
     const token = jwt.sign(
@@ -75,9 +75,9 @@ router.post('/login', async (req, res) => {
     );
 
     res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Error' });
+  } catch (error: any) {
+    console.error("Auth Login Error:", error);
+    res.status(500).json({ error: error.message || 'Database error during login.' });
   }
 });
 
