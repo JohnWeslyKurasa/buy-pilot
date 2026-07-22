@@ -30,7 +30,7 @@ export class FlipkartProvider implements BaseProvider {
       $('div[data-id]').slice(0, 15).each((_, el) => {
         const text = $(el).text();
         let rawTitle = $(el).find('a[title]').attr('title') || $(el).find('img').attr('alt') || $(el).find('a').first().text().trim();
-        rawTitle = rawTitle.replace(/^Add to Compare/i, '').trim();
+        rawTitle = rawTitle.replace(/Add to Compare/ig, '').trim();
 
         const priceMatch = text.match(/₹([0-9,]+)/);
         const price = priceMatch ? parseInt(priceMatch[1].replace(/[^0-9]/g, ""), 10) : 0;
