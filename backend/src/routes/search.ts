@@ -166,17 +166,15 @@ router.post("/", async (req, res) => {
       }
     }
 
-    // Filter: must have a title, a URL, and either an image or at least one valid offer
-    const yahooStores = ["Croma", "Reliance Digital", "Nykaa", "Meesho"];
+    // Filter: must have a title, at least one offer, and valid URL
     let groupedArray = groups.filter(
-      (g) =>
-        g.title &&
-        g.offers.length > 0 &&
-        g.offers[0].productUrl &&
-        (g.image || g.offers.some((o) => yahooStores.includes(o.marketplace)))
+      (g) => g.title && g.offers.length > 0 && g.offers[0].productUrl
     );
 
     groupedArray.forEach((g) => {
+      if (!g.image) {
+        g.image = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60";
+      }
       if (g.lowestPrice > 0 && g.lowestPrice < 1500) g.badges.push("Low Price");
       if (parseFloat(g.rating || "0") >= 4.2) g.badges.push("Highly Rated");
       if (g.offers.some((o) => o.discount && o.discount > 50)) g.badges.push("Best Value");
