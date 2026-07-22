@@ -36,7 +36,9 @@ export default function Home() {
     setShowCompare(false);
     
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+      let rawUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+      if (rawUrl.endsWith('/')) rawUrl = rawUrl.slice(0, -1);
+      const baseUrl = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
 
       // 1. Fetch Grouped Real Products
       const searchRes = await fetch(`${baseUrl}/search`, {
@@ -44,6 +46,11 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
       });
+
+      if (!searchRes.ok) {
+        throw new Error(`API error: ${searchRes.status} ${searchRes.statusText}`);
+      }
+
       const data = await searchRes.json();
       
       const products: GroupedProduct[] = data.results || [];

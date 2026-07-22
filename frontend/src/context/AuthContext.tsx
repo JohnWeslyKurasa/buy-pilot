@@ -4,7 +4,9 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+let rawUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+if (rawUrl.endsWith('/')) rawUrl = rawUrl.slice(0, -1);
+export const API_URL = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
 
 interface User {
   id: string;
