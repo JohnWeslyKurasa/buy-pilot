@@ -30,10 +30,10 @@ router.post("/", async (req, res) => {
     
     // Sort helpers
     const byRating = [...products].sort((a, b) => parseFloat(b.rating || "0") - parseFloat(a.rating || "0"));
-    const byPrice = [...products].sort((a, b) => a.lowestPrice - b.lowestPrice);
+    const byPrice = [...products].sort((a, b) => (a.lowestPrice || 0) - (b.lowestPrice || 0));
     const byDiscount = [...products].sort((a, b) => {
-      const maxDiscA = Math.max(...a.offers.map(o => o.discount || 0), 0);
-      const maxDiscB = Math.max(...b.offers.map(o => o.discount || 0), 0);
+      const maxDiscA = Math.max(...(a.offers || []).map(o => o.discount || 0), 0);
+      const maxDiscB = Math.max(...(b.offers || []).map(o => o.discount || 0), 0);
       return maxDiscB - maxDiscA;
     });
 
@@ -82,8 +82,8 @@ router.post("/", async (req, res) => {
       summary: `Based on your search for "${query}", here are the best products from our cross-marketplace analysis. We've aggregated data to ensure you get the absolute best match for your needs.`,
       recommendations,
       pros: [
-        `Lowest price found is ₹${byPrice[0].lowestPrice.toLocaleString("en-IN")}`,
-        `Highest rated option is ${byRating[0].brand} with ${byRating[0].rating || 'good'} stars`,
+        `Lowest price found is ₹${byPrice[0]?.lowestPrice != null ? byPrice[0].lowestPrice.toLocaleString("en-IN") : "N/A"}`,
+        `Highest rated option is ${byRating[0]?.brand || "Item"} with ${byRating[0]?.rating || 'good'} stars`,
       ],
       cons: [
         `Prices and stock availability can fluctuate rapidly across stores`,
